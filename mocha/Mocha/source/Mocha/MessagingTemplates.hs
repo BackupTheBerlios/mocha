@@ -4,12 +4,12 @@ import Language.Haskell.THSyntax
 
 import Mocha.THLibrary
 
-declareObjCArgumentsForTuples lengths = returnQ (map mkTupleArgs lengths)
+declareObjCArgumentsForTuples lengths = returnQ (map mkTupleleArgs lengths)
 
-mkTupleArgs numTuples = InstanceD
+mkTupleleArgs numTuples = InstanceD
    (map mkCxtN [1..numTuples])
    (AppT (ConT "ObjCArguments") 
-         (mkTup [VarT ("a" ++ show n) | n <- [1..numTuples]])
+         (mkTuple [VarT ("a" ++ show n) | n <- [1..numTuples]])
    ) [declarations]
    where
       mkCxtN n = AppT (ConT "ObjCArgument") (VarT $ "a" ++ show n)
@@ -23,12 +23,12 @@ mkTupleArgs numTuples = InstanceD
 	        (LitE $ IntegerL n)) (VarE "expr")) (VarE $ "a" ++ show n)
 	 | n <- [1..numTuples] ]
 
-declareTypeEncodingForTuples lengths = returnQ (map mkTupleEncodings lengths)
+declareTypeEncodingForTuples lengths = returnQ (map mkTupleleEncodings lengths)
 
-mkTupleEncodings numTuples = InstanceD
+mkTupleleEncodings numTuples = InstanceD
    (map mkCxtN [1..numTuples])
    (AppT (ConT "ObjCTypeEncoding") 
-         (mkTup [VarT ("a" ++ show n) | n <- [1..numTuples]])
+         (mkTuple [VarT ("a" ++ show n) | n <- [1..numTuples]])
    ) [declarations]
    where
       mkCxtN n = AppT (ConT "ObjCTypeEncoding") (VarT $ "a" ++ show n)
