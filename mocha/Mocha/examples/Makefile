@@ -15,5 +15,5 @@ URLFetcher: URLFetcher.hs
 	$(GHC) -o $@ -package mocha --make -framework Foundation $<
 
 clean:
-	-rm *{.o,.hi,_stub.*} NSMovieTest URLFetcher
+	-rm *{.o,.hi,_stub.*} NSMovieTest URLFetcher NSArrayTest
 
