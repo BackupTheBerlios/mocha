@@ -1,0 +1,9 @@
+#!/bin/sh
+
+mocha_module="$1"
+shift
+
+exec ghci -isource -odir build/objects -hidir build/imports -lobjc \
+    -framework Foundation build/objects/MochaBridge.o \
+    -package-name mocha Mocha."$mocha_module" "$@"
+

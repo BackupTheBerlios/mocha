@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "$1" | sed -e 's/\.hs/_stub.hs/' | sed -e 's/\.o/_stub.o/'
+

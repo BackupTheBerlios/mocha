@@ -1,0 +1,8 @@
+#!/bin/sh
+
+for i in `cat "$@"`; do
+  echo "$i"
+  basename="`echo "$i" | sed -e 's/\.o$//'`"
+  [ -f ${basename}_stub.o ] && echo "${basename}_stub.o"
+done
+

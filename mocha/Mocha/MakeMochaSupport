@@ -1,0 +1,58 @@
+#!/bin/sh -x
+
+set -e
+
+ghc_libdir=`ghc --print-libdir`
+
+[ -d MochaSupport.framework ] && rm -r MochaSupport.framework
+
+mkdir -p MochaSupport.framework/tmp
+mkdir -p MochaSupport.framework/Versions/A/Resources/English.lproj
+
+gcc -g -c -o MochaSupport.framework/tmp/HSProxy.o -Wall \
+	-I/System/Library/Frameworks/Foundation.framework/Headers \
+	-I${ghc_libdir}/include source/Mocha/HSProxy.m 2> /dev/null
+
+ld -dylib -o MochaSupport.framework/Versions/A/MochaSupport \
+	MochaSupport.framework/tmp/HSProxy.o \
+	/usr/lib/dylib1.o \
+	-r \
+	-lobjc \
+	-lSystem \
+	-L${ghc_libdir} -lHSrts \
+	-framework Foundation
+
+ln -s A MochaSupport.framework/Versions/Current
+ln -s Versions/Current/MochaSupport MochaSupport.framework/MochaSupport 
+ln -s Versions/Current/Resources MochaSupport.framework/Resources
+
+cat > MochaSupport.framework/Versions/A/Resources/Info.plist << END
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>English</string>
+        <key>CFBundleExecutable</key>
+        <string>MochaSupport</string>
+        <key>CFBundleInfoDictionaryVersion</key>
+        <string>6.0</string>
+        <key>CFBundlePackageType</key>
+        <string>FMWK</string>
+        <key>CFBundleSignature</key>
+        <string>????</string>
+        <key>CFBundleVersion</key>
+        <string>1.0</string>
+</dict>
+</plist>
+END
+
+cat > MochaSupport.framework/Versions/A/Resources/English.lproj/InfoPlist.strings << END
+/* Localized versions of Info.plist keys */
+
+CFBundleName = "MochaSupport";
+CFBundleShortVersionString = "MochaSupport version 1.0";
+CFBundleGetInfoString = "MochaSupport version 1.0, Copyright (c) 2003 André T.H. Pang.";
+NSHumanReadableCopyright = "Copyright (c) 2003 André T.H. Pang";
+END
+

@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {loadMovie = id; playOrPauseMovie = id; rot13 = id; }; 
+            CLASS = MyObject; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {aMovieView = id; aTextField = NSTextField; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

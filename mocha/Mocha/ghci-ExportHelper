@@ -1,0 +1,4 @@
+ghci -isource -odir build/objects -hidir build/imports -lobjc \
+    -framework Foundation build/objects/MochaBridge.o \
+    -package-name mocha Mocha.ExportHelper
+

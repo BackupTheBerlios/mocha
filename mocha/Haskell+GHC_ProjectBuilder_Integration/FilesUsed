@@ -1,0 +1,17 @@
+* Modified:
+/Developer/Private/jam
+/System/Library/PrivateFrameworks/PBXCore.framework/Resources/Jambase-parse-info.plist
+
++ Added:
+"/Developer/ProjectBuilder Extras/Specifications/ghc.pbcompspec" (probably not needed)
+"/Developer/ProjectBuilder Extras/Specifications/Haskell.pbfilespec"
+"/Developer/ProjectBuilder Extras/Specifications/Haskell.pblangspec"
+"/Developer/Makefiles/pbx_jamfiles/HaskellJambase"
+
+Required scripts and stuff:
+ghc-linkfilelist
+hs-depends-on (not needed?)
+mkstub
+jam (move old /Developer/Private/jam to /Developer/Private/jam.real)
+
+* Search for "Users" in the HaskellJambase file and replace with appropriate paths

@@ -1,0 +1,10 @@
+#!/bin/sh -x
+
+make clean
+
+set -e
+
+make build
+sudo make uninstall || exit 0
+sudo make install.devel
+

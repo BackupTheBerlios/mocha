@@ -1,0 +1,83 @@
+For each of the instance, class object, metaclass object and protocol object trees:
+
+* Declare a type:
+
+newtype NSTextFieldClassObject = NSTextFieldClassObject (Ptr NSTextFieldClassObject)
+   deriving (Eq, Show, Typeable)
+
+* Declare its own class:
+
+class (ObjCObject o,
+       ObjCClass o,
+       NSObjectClass o)
+   => NSTextFieldClass o where
+   toNSTextFieldClassObject :: o -> NSTextFieldClassObject
+   fromNSTextFieldClassObject :: NSTextFieldClassObject -> o
+
+* Make the type an instance of ObjCObject
+
+instance ObjCObject NSTextFieldClassObject where
+   toID (NSTextFieldClassObject p) = ID (castPtr p)
+   fromID (ID p) = NSTextFieldClassObject (castPtr p)
+
+* Make the type an instance of the root object of that hierarchy (ObjCClass,
+  ObjCInstance or ObjCMetaclass):
+
+instance ObjCClass NSTextFieldClassObject where
+   toObjCClassObject (NSTextFieldClassObject p) =
+      ObjCClassObject (castPtr p)
+   fromObjCClassObject (ObjCClassObject p) =
+      NSTextFieldClassObject (castPtr p)
+   classObjectName _ = "NSTextField"
+
+* Make it an instance of each of the parent classes, recursively chasing upward:
+
+instance NSObjectClass NSTextFieldClassObject where
+   toNSObjectClassObject (NSTextFieldClassObject p) =
+      NSObjectClassObject (castPtr p)
+   fromNSObjectClassObject (NSObjectClassObject p) =
+      NSTextFieldClassObject (castPtr p)
+
+* Make it an instance of its own class:
+
+instance NSTextFieldClass NSTextFieldClassObject where
+   toNSTextFieldClassObject = id
+   fromNSTextFieldClassObject = id
+
+* Make the type an instance of ObjCTypeEncoding:
+
+instance ObjCTypeEncoding NSTextFieldClassObject
+
+* Make the type an instance of ObjCArgument:
+
+instance ObjCArgument NSTextFieldClassObject where
+   setArgument = setObjectArgument
+
+* Make the type an instance of ObjCObjectArgument:
+
+instance ObjCObjectArgument NSTextFieldClassObject
+
+* Make the type an instance of ObjCMessageReply:
+
+instance ObjCMessageReply NSTextFieldClassObject where
+   sendMessage = sendObjectMessage
+
+* Make the type an instance of ObjCObjectMessageReply:
+
+instance ObjCObjectMessageReply NSTextFieldClassObject
+
+* Allow overrides of id types for function argument and return types.  Since
+  the Objective-C runtime is dynamically typed, its reflection capabilities
+  cannot report that each class has anything more specific than an 'id' type.
+
+Add:
++ (char *)classOfArgumentForSelector:(SEL)aSelector atIndex:(int)index
+or
+[
+ ("NSMovie",
+  [ "initWithPasteboard:", [(0, "NSMovie"), (1, "NSPasteboard")]
+  , "initWithURL:byReference", [(0, "NSMovie"), (1, "NSURL")]
+  ]
+ )
+]
+

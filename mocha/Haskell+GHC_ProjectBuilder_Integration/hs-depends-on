@@ -1,0 +1,41 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use Fcntl;
+use POSIX qw(tmpnam);
+
+my $tmpfile;
+my @depends_on;
+
+# create a temporary file
+
+do { $tmpfile = tmpnam() }
+  until sysopen (FH, $tmpfile, O_RDWR|O_CREAT|O_EXCL);
+close (FH);
+
+END { unlink($tmpfile) or die "Couldn't unlikn $tmpfile: $!" }
+
+# run GHC to determine dependencies
+
+system("ghc -M -optdep -f -optdep $tmpfile @ARGV");
+
+# simplify dependencies
+
+my @dependencies;
+
+open (TMPFILE, $tmpfile);
+
+foreach (<TMPFILE>)
+{
+  chomp;
+  next if (/^#/);
+  my (undef, $maybe_dependency) = split(/\s*:\s*/, $_);
+  if ($maybe_dependency =~ /\.h[is]\s*$/)
+  {
+    $maybe_dependency =~ s/\.h[is]\s*/.o/;
+    push @dependencies, $maybe_dependency;
+  }
+}
+print join (' ', @dependencies), "\n";
+

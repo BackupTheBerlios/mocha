@@ -1,0 +1,19 @@
+/**
+  Haskell source file specs.
+*/
+
+(
+  {
+    Identifier = sourcecode.haskell;
+    BasedOn = sourcecode;
+    Extensions = (hs);
+    ComputerLanguage = haskell;
+  },
+  {
+    Identifier = sourcecode.haskell.literate;
+    BasedOn = sourcecode.haskell;
+    Extensions = (lhs);
+    ComputerLanguage = haskell;
+  }
+)
+

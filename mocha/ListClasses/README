@@ -1,0 +1,22 @@
+There are three targets which can be built from the Makefile:
+
+* ListCocoaClasses
+* ListFoundationClasses
+
+  - These two Haskell programs FFI-import the functions in
+    lookup_loaded_objc_classes.o to examine the Objective-C class hierarchy at
+    run-time.  They only differ in what Objective-C frameworks are linked in to
+    the final executable; ListCocoaClasses is linked against Cocoa, whereas
+    ListFoundationClasses is only linked against Foundation.
+    
+* ClassListTemplateTest
+
+  - This program uses Template Haskell to examine the Objective-C class
+    hierarchy _during compilation_ by FFI-calling the functions in
+    lookup_loaded_objc_classes.o.  As such, you should see no output when you
+    _run_ the program, but you should see a whole bunch of output when you
+    _compile_ it.
+
+  - ClassListTemplateTest is not a default make target; you have to manually
+    specify that you want it built by typing 'make ClassListTemplateTest'.
+

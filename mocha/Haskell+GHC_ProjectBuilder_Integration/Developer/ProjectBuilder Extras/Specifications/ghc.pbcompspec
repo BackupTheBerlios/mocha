@@ -1,0 +1,40 @@
+{
+    Identifier = edu.yale.cs.haskell.ghc;
+    Name = "GHC";
+    Description = "Glasgow Haskell Compiler";
+    Version = "6.0";
+    Vendor = "The University Court of the University of Glasgow";
+    
+    Languages = (haskell);
+    
+    Platform = {
+    
+        macos = {
+	    Architectures = (ppc, i386);
+            ExecPath = "/usr/local/bin/ghc";
+
+            ExecArguments = "-c «ARCHITECTURES» «DEBUGGING» «OPTIMIZATION» «WARNINGS» «SYMBOL_DEFINITIONS» «IDE_SPECIFIC_ARGS» «SEARCH_PATHS» «PBX_EXTRA_ARGS» \"«PBX_INFILEPATH»\" -o \"«OBJECTCODE_FILE»\"";
+
+            ExecEnvironment = {
+            };
+
+            OutputParsing = {
+                IgnorableRegexes = ("\(Each undeclared identifier is reported only once$", "for each function it appears in.\)$");
+                StatusRegexes = ();
+                WarningRegexes = ("^(.*):([0-9]*): (warning: .*)$", "^(.*):([0-9]*): (instantiated from .*)$");
+                ErrorRegexes = ("^(.*):([0-9]*): (.*)$");
+                FilenameRegexes = ("^/usr/local/bin/ghc .* (.*\.{c,m,C,M,cpp,c++,cxx})$");
+                StatusFormat = "Compiling %@";
+                JamRuleNames = ("CompileHaskell");
+                JamRuleInfileParamNum = 1;
+            };
+
+            BuildRule = {
+                AllowableInputFileTypes = ("hs", "lhs");
+                OutputFiles = ({OBJECTCODE_FILE = "«PBX_INFILEPATH|X=o»";});
+            };
+
+        };
+    };
+}
+

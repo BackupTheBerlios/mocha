@@ -1,0 +1,36 @@
+module Main where
+
+import Foreign
+import Foreign.C.String
+import Foreign.C.Types
+
+type Class = Ptr ()
+
+main = do
+   initialiseClassLookup
+   c <- getNextClass
+   lookupClasses c
+
+lookupClasses c
+   | c == nullPtr = return ()
+   | otherwise	  = do
+     cnCS <- className c
+     cn <- peekCString cnCS
+     scnCS <- superclassName c
+     scn <- peekCString scnCS
+     putStrLn $ cn ++ " (" ++ scn ++ ")"
+     newC <- getNextClass
+     lookupClasses newC
+
+foreign import ccall "initialise_class_lookup"
+   initialiseClassLookup :: IO ()
+
+foreign import ccall "get_next_class"
+   getNextClass :: IO Class
+
+foreign import ccall "class_name"
+   className :: Class -> IO CString
+
+foreign import ccall "superclass_name"
+   superclassName :: Class -> IO CString
+

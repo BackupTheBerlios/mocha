@@ -1,0 +1,6 @@
+Due to a limitation with Template Haskell, if you are writing an
+Objective-C class in Haskell using Mocha, the name of the methods
+in the class must directly correspond to the Haskell function.
+e.g. if you have a method named "Foo:withBar:", then the
+corresponding Haskell function name must be "foo_withBar".
+

@@ -1,0 +1,101 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my @jam_file = <STDIN>;
+close STDIN;
+
+my $resources_start;
+my $resources_end;
+my $sources_start;
+my $sources_end;
+
+# search for start/end of resources & sources
+for (my $i = 0; $i <= $#jam_file; $i++)
+{
+  # resources
+  if ($jam_file[$i] =~ /RESOURCES =/)
+  {
+    $resources_start = $i;
+  }
+  elsif ($jam_file[$i] =~ /^ProcessResources.*;$/)
+  {
+    $resources_end = $i;
+  }
+  # sources
+  elsif ($jam_file[$i] =~ /SOURCES =/)
+  {
+    $sources_start = $i;
+  }
+  elsif ($jam_file[$i] =~ /^ProcessSources.*;$/)
+  {
+    $sources_end = $i;
+  }
+}
+
+my $has_haskell = 0;
+
+if (defined $resources_start and defined $sources_start)
+{
+  # move any .hs files in RESOURCES to SOURCES
+  for (my $i = $resources_start; $i < $resources_end; $i++)
+  {
+    $_ = $jam_file[$i];
+    last if (/^ProcessResources.*;$/);
+
+    if (/\.hs( ;)?$/)
+    {
+      # remove it from RESOURCES
+      my $hs_file = splice (@jam_file, $i, 1);
+      # ... and add a ; to the previous line if necessary
+      if (/;$/)
+      {
+	chomp ($jam_file[$i - 1]);
+	$jam_file[$i - 1] .= " ;\n";
+      }
+      # add it to SOURCES
+      splice (@jam_file, $sources_end - 1, 0, ($hs_file));
+      # and remove the previous line's ; if necessary
+      if ($jam_file[$sources_end - 2] =~ / ;$/)
+      {
+	$jam_file[$sources_end - 2] =~ s/ ;$//;
+      }
+      $i--;
+      $has_haskell = 1;
+    }
+  }
+}
+
+if ($jam_file[$sources_end - 1] !~ /;\s*$/)
+{
+  chomp $jam_file[$sources_end - 1];
+  $jam_file[$sources_end - 1] .= " ;\n";
+}
+
+if ($has_haskell)
+{
+  splice (@jam_file, $sources_end + 1, 0, ("HAS_HASKELL = YES ;\n"));
+}
+
+print @jam_file;
+
+# run the real JAM
+local $SIG{PIPE} = sub { die "jam pipe broke" };
+my @args = @ARGV;
+foreach (@args)
+{
+  s/ /\\ /g;
+
+  if ($_ eq 'JAMBASE=/Developer/Makefiles/pbx_jamfiles/ProjectBuilderJambase')
+  {
+    $_ = 'JAMBASE=/Developer/Makefiles/pbx_jamfiles/HaskellJambase';
+  }
+}
+
+#print @args;
+
+my $JAMMER;
+open ($JAMMER, '|/Developer/Private/jam.real ' . join(' ', @args));
+print $JAMMER @jam_file;
+close $JAMMER;
+

@@ -1,0 +1,17 @@
+* type SubNSObject o = (Cast o NSObject, SubtypeOfNSObject o) => o
+
+* instead of "NSObjectClassObject", what about "ClassObject NSObject"?
+
+* how to handle instance variables?
+
+* instead of:
+    textField <- ((getInstanceVariable aTextField :: IO ID) >>=^ cast) :: IO NSTextField
+  .. how about
+    textField <- getInstanceVariableWithCast aTextField :: IO NSTextField
+  ?
+
+* interface generator should generate IO monad variants for each primitive
+  data type for direct messaging
+
+* type check whether types passed to mochaExportClass match actual types
+
